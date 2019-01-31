@@ -7,6 +7,8 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.res.TypedArray
 import android.os.Build
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -147,8 +149,8 @@ class StatefulView : FrameLayout {
     }
 
     @JvmOverloads
-    fun showLoading(message: String? = null) {
-        if (state == STATE_LOADING) {
+    fun showLoading(message: CharSequence? = null) {
+        if (state == STATE_LOADING && mLoadingView?.visibility == View.VISIBLE) {
             return
         }
         this.state = STATE_LOADING
@@ -183,8 +185,8 @@ class StatefulView : FrameLayout {
 
 
     @JvmOverloads
-    fun showError(message: String? = null) {
-        if (state == STATE_ERROR) {
+    fun showError(message: CharSequence? = null) {
+        if (state == STATE_ERROR && mErrorView?.visibility == View.VISIBLE) {
             return
         }
         this.state = STATE_ERROR
@@ -211,7 +213,7 @@ class StatefulView : FrameLayout {
 
     @JvmOverloads
     fun showContent(anim: Boolean = true) {
-        if (state == STATE_FINISH) {
+        if (state == STATE_FINISH && mContentView?.visibility == View.VISIBLE) {
             return
         }
         this.state = STATE_FINISH
@@ -316,6 +318,39 @@ class StatefulView : FrameLayout {
         }
     }
 
+    override fun onSaveInstanceState(): Parcelable? {
+        val bundle = Bundle()
+        val superData = super.onSaveInstanceState()
+        bundle.putParcelable("super_data", superData)
+        bundle.putInt("state", state)
+        tvLoadingMessage?.text?.let {
+            bundle.putCharSequence("loading_message", it)
+        }
+        tvErrorMessage?.text?.let {
+            bundle.putCharSequence("error_message", it)
+        }
+        return bundle;
+
+
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        val bundle = state as Bundle
+        val superData = bundle.getParcelable<Parcelable>("super_data")
+        super.onRestoreInstanceState(superData)
+        this.state = bundle.getInt("state");
+        when (this.state) {
+            STATE_LOADING -> {
+                showLoading(bundle.getCharSequence("loading_message"))
+            }
+            STATE_ERROR -> {
+                showError(bundle.getCharSequence("error_message"))
+            }
+            STATE_FINISH -> {
+                showContent()
+            }
+        }
+    }
 
     companion object {
 

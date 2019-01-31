@@ -32,8 +32,9 @@ class MainActivity : AppCompatActivity() {
         stateful_view.onRetryListener = {
             loadData()
         }
-
-        loadData()
+        if (savedInstanceState == null) {
+            loadData()
+        }
     }
 
     private fun loadData() {
