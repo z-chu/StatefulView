@@ -28,22 +28,22 @@ class StatefulView : FrameLayout {
     private lateinit var mLayoutInflater: LayoutInflater
     private var mLoadingView: View? = null
         set(value) {
-            if (mLoadingTextViewId != View.NO_ID) {
-                tvLoadingMessage = value?.findViewById(mLoadingTextViewId)
+            if (loadingTextViewId != View.NO_ID) {
+                tvLoadingMessage = value?.findViewById(loadingTextViewId)
             }
             field = value
         }
 
     private var mErrorView: View? = null
         set(value) {
-            if (mRetryViewId != View.NO_ID) {
-                val retryView = value?.findViewById<View>(mRetryViewId)
+            if (retryViewId != View.NO_ID) {
+                val retryView = value?.findViewById<View>(retryViewId)
                 retryView?.setOnClickListener {
                     onRetryListener?.invoke(it)
                 }
             }
-            if (mErrorTextViewId != View.NO_ID) {
-                tvErrorMessage = value?.findViewById(mErrorTextViewId)
+            if (errorTextViewId != View.NO_ID) {
+                tvErrorMessage = value?.findViewById(errorTextViewId)
             }
             field = value
         }
@@ -86,10 +86,14 @@ class StatefulView : FrameLayout {
 
     private var tvLoadingMessage: TextView? = null
     private var tvErrorMessage: TextView? = null
-    private var mLoadingTextViewId: Int = View.NO_ID
-    private var mErrorTextViewId: Int = View.NO_ID
-    private var mRetryViewId: Int = View.NO_ID
-    private var lazyLoading: Boolean = false
+    var loadingTextViewId: Int = View.NO_ID
+    var errorTextViewId: Int = View.NO_ID
+    var retryViewId: Int = View.NO_ID
+     var lazyLoading: Boolean = false
+    set(value) {
+        checkIsLegalStatus()
+        field = value
+    }
 
 
     var onRetryListener: ((View) -> Unit)? = null
@@ -141,9 +145,9 @@ class StatefulView : FrameLayout {
         mContentLayoutId = typedArray.getResourceId(R.styleable.StatefulView_contentLayout, mContentLayoutId)
         mLoadingLayoutId = typedArray.getResourceId(R.styleable.StatefulView_loadingLayout, mLoadingLayoutId)
         mErrorLayoutId = typedArray.getResourceId(R.styleable.StatefulView_errorLayout, mErrorLayoutId)
-        mErrorTextViewId = typedArray.getResourceId(R.styleable.StatefulView_errorTextViewId, mErrorTextViewId)
-        mLoadingTextViewId = typedArray.getResourceId(R.styleable.StatefulView_loadingTextViewId, mLoadingTextViewId)
-        mRetryViewId = typedArray.getResourceId(R.styleable.StatefulView_retryViewId, mRetryViewId)
+        errorTextViewId = typedArray.getResourceId(R.styleable.StatefulView_errorTextViewId, errorTextViewId)
+        loadingTextViewId = typedArray.getResourceId(R.styleable.StatefulView_loadingTextViewId, loadingTextViewId)
+        retryViewId = typedArray.getResourceId(R.styleable.StatefulView_retryViewId, retryViewId)
         typedArray.recycle()
 
     }
