@@ -89,11 +89,11 @@ class StatefulView : FrameLayout {
     var loadingTextViewId: Int = View.NO_ID
     var errorTextViewId: Int = View.NO_ID
     var retryViewId: Int = View.NO_ID
-     var lazyLoading: Boolean = false
-    set(value) {
-        checkIsLegalStatus()
-        field = value
-    }
+    var lazyLoading: Boolean = false
+        set(value) {
+            checkIsLegalStatus()
+            field = value
+        }
 
 
     var onRetryListener: ((View) -> Unit)? = null
@@ -358,14 +358,14 @@ class StatefulView : FrameLayout {
 
     companion object {
 
-        val STATE_NONE = 0
-        val STATE_LOADING = 1
-        val STATE_ERROR = 2
-        val STATE_FINISH = 3
+        const val STATE_NONE = 0
+        const val STATE_LOADING = 1
+        const val STATE_ERROR = 2
+        const val STATE_FINISH = 3
         //单位dp
-        private val ANIM_TRANSLATE_Y = 40F
+        private const val ANIM_TRANSLATE_Y = 40F
         //动画持续时间
-        private val ANIM_TIME_LONG = 500
+        private const val ANIM_TIME_LONG = 500
     }
 
 }
