@@ -51,36 +51,52 @@ class StatefulView : FrameLayout {
 
     private var mContentLayoutId: Int = View.NO_ID
         set(value) {
-            if (lazyLoading && value != View.NO_ID) {
-                val contentView = mLayoutInflater.inflate(mContentLayoutId, this, false)
-                mContentView = contentView
-                addView(contentView, 0)
-                onContentViewCreatedListener?.invoke(contentView)
-            }
+            inflateContentLayout(value)
             field = value
         }
+
+    private fun inflateContentLayout(value: Int) {
+        if (mContentView==null&&!lazyLoading && value != View.NO_ID) {
+            val root=if(isFinishInflate) this else null
+            val contentView = mLayoutInflater.inflate(mContentLayoutId, root, false)
+            mContentView = contentView
+            addView(contentView, 0)
+            onContentViewCreatedListener?.invoke(contentView)
+        }
+    }
 
     private var mLoadingLayoutId: Int = View.NO_ID
         set(value) {
-            if (lazyLoading && value != View.NO_ID) {
-                val loadingView = mLayoutInflater.inflate(mLoadingLayoutId, this, false)
-                mLoadingView = loadingView
-                addView(loadingView)
-                onLoadingViewCreatedListener?.invoke(loadingView)
-            }
+            inflateLoadingLayout(value)
             field = value
         }
 
+    private fun inflateLoadingLayout(value: Int) {
+        if (mLoadingView==null&&!lazyLoading && value != View.NO_ID) {
+            val root=if(isFinishInflate) this else null
+            val loadingView = mLayoutInflater.inflate(mLoadingLayoutId, root, false)
+            mLoadingView = loadingView
+            addView(loadingView)
+            onLoadingViewCreatedListener?.invoke(loadingView)
+        }
+    }
+
     private var mErrorLayoutId: Int = View.NO_ID
         set(value) {
-            if (lazyLoading && value != View.NO_ID) {
-                val errorView = mLayoutInflater.inflate(mErrorLayoutId, this, false)
-                mErrorView = errorView
-                addView(errorView)
-                onErrorViewCreatedListener?.invoke(errorView)
-            }
+            inflateErrorLayout(value)
             field = value
         }
+
+    private fun inflateErrorLayout(value: Int) {
+        if (mErrorView==null&&!lazyLoading && value != View.NO_ID) {
+            val root=if(isFinishInflate) this else null
+            val errorView = mLayoutInflater.inflate(mErrorLayoutId, root, false)
+            mErrorView = errorView
+            addView(errorView)
+            onErrorViewCreatedListener?.invoke(errorView)
+        }
+    }
+
     var state = STATE_NONE
         private set
 
@@ -118,6 +134,8 @@ class StatefulView : FrameLayout {
             }
             field = value
         }
+
+    private var isFinishInflate: Boolean = false
 
     @JvmOverloads
     constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : super(
@@ -187,6 +205,11 @@ class StatefulView : FrameLayout {
         showError(context.getString(resId))
     }
 
+
+    override fun onFinishInflate() {
+        super.onFinishInflate()
+        isFinishInflate = true
+    }
 
     @JvmOverloads
     fun showError(message: CharSequence? = null) {
