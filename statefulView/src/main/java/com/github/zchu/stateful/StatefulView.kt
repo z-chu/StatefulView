@@ -51,51 +51,41 @@ class StatefulView : FrameLayout {
 
     private var mContentLayoutId: Int = View.NO_ID
         set(value) {
-            inflateContentLayout(value)
+            if (mContentView==null&&!lazyLoading && value != View.NO_ID) {
+                val contentView = mLayoutInflater.inflate(value, this, false)
+                contentView.visibility=View.GONE
+                mContentView = contentView
+                addView(contentView, 0)
+                onContentViewCreatedListener?.invoke(contentView)
+            }
             field = value
         }
-
-    private fun inflateContentLayout(value: Int) {
-        if (mContentView==null&&!lazyLoading && value != View.NO_ID) {
-            val root=if(isFinishInflate) this else null
-            val contentView = mLayoutInflater.inflate(mContentLayoutId, root, false)
-            mContentView = contentView
-            addView(contentView, 0)
-            onContentViewCreatedListener?.invoke(contentView)
-        }
-    }
 
     private var mLoadingLayoutId: Int = View.NO_ID
         set(value) {
-            inflateLoadingLayout(value)
+            if (mLoadingView==null&&!lazyLoading && value != View.NO_ID) {
+                val loadingView = mLayoutInflater.inflate(value, this, false)
+                loadingView.visibility=View.GONE
+                mLoadingView = loadingView
+                addView(loadingView)
+                onLoadingViewCreatedListener?.invoke(loadingView)
+            }
             field = value
         }
 
-    private fun inflateLoadingLayout(value: Int) {
-        if (mLoadingView==null&&!lazyLoading && value != View.NO_ID) {
-            val root=if(isFinishInflate) this else null
-            val loadingView = mLayoutInflater.inflate(mLoadingLayoutId, root, false)
-            mLoadingView = loadingView
-            addView(loadingView)
-            onLoadingViewCreatedListener?.invoke(loadingView)
-        }
-    }
+
 
     private var mErrorLayoutId: Int = View.NO_ID
         set(value) {
-            inflateErrorLayout(value)
+            if (mErrorView==null&&!lazyLoading && value != View.NO_ID) {
+                val errorView = mLayoutInflater.inflate(value, this, false)
+                errorView.visibility=View.GONE
+                mErrorView = errorView
+                addView(errorView)
+                onErrorViewCreatedListener?.invoke(errorView)
+            }
             field = value
         }
-
-    private fun inflateErrorLayout(value: Int) {
-        if (mErrorView==null&&!lazyLoading && value != View.NO_ID) {
-            val root=if(isFinishInflate) this else null
-            val errorView = mLayoutInflater.inflate(mErrorLayoutId, root, false)
-            mErrorView = errorView
-            addView(errorView)
-            onErrorViewCreatedListener?.invoke(errorView)
-        }
-    }
 
     var state = STATE_NONE
         private set
@@ -135,7 +125,6 @@ class StatefulView : FrameLayout {
             field = value
         }
 
-    private var isFinishInflate: Boolean = false
 
     @JvmOverloads
     constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : super(
@@ -160,12 +149,12 @@ class StatefulView : FrameLayout {
     private fun inflateView(context: Context, typedArray: TypedArray) {
         mLayoutInflater = LayoutInflater.from(context)
         lazyLoading = typedArray.getBoolean(R.styleable.StatefulView_LazyLoading, false)
-        mContentLayoutId = typedArray.getResourceId(R.styleable.StatefulView_contentLayout, mContentLayoutId)
-        mLoadingLayoutId = typedArray.getResourceId(R.styleable.StatefulView_loadingLayout, mLoadingLayoutId)
-        mErrorLayoutId = typedArray.getResourceId(R.styleable.StatefulView_errorLayout, mErrorLayoutId)
         errorTextViewId = typedArray.getResourceId(R.styleable.StatefulView_errorTextViewId, errorTextViewId)
         loadingTextViewId = typedArray.getResourceId(R.styleable.StatefulView_loadingTextViewId, loadingTextViewId)
         retryViewId = typedArray.getResourceId(R.styleable.StatefulView_retryViewId, retryViewId)
+        mContentLayoutId = typedArray.getResourceId(R.styleable.StatefulView_contentLayout, mContentLayoutId)
+        mLoadingLayoutId = typedArray.getResourceId(R.styleable.StatefulView_loadingLayout, mLoadingLayoutId)
+        mErrorLayoutId = typedArray.getResourceId(R.styleable.StatefulView_errorLayout, mErrorLayoutId)
         typedArray.recycle()
 
     }
@@ -205,11 +194,6 @@ class StatefulView : FrameLayout {
         showError(context.getString(resId))
     }
 
-
-    override fun onFinishInflate() {
-        super.onFinishInflate()
-        isFinishInflate = true
-    }
 
     @JvmOverloads
     fun showError(message: CharSequence? = null) {
