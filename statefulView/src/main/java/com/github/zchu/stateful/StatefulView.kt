@@ -165,6 +165,8 @@ class StatefulView : FrameLayout {
             return
         }
         this.state = STATE_LOADING
+        mErrorView?.visibility = View.GONE
+        mContentView?.visibility = View.GONE
         var loadingView = mLoadingView
         if (loadingView != null) {
             loadingView.visibility = View.VISIBLE
@@ -182,8 +184,6 @@ class StatefulView : FrameLayout {
                 it.text = message
             }
         }
-        mErrorView?.visibility = View.GONE
-
     }
 
     fun showLoading(@StringRes resId: Int) {
@@ -202,6 +202,7 @@ class StatefulView : FrameLayout {
         }
         this.state = STATE_ERROR
         mLoadingView?.visibility = View.GONE
+        mContentView?.visibility = View.GONE
         var errorView = mErrorView
         if (errorView != null) {
             errorView.visibility = View.VISIBLE
