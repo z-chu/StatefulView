@@ -284,8 +284,8 @@ class StatefulView : FrameLayout {
 
     fun setLoadingLayoutId(@LayoutRes layoutId: Int) {
         checkIsLegalStatus()
-        this.mLoadingLayoutId = layoutId
         mLoadingView = null
+        this.mLoadingLayoutId = layoutId
     }
 
     fun setLoadingView(view: View) {
@@ -298,8 +298,8 @@ class StatefulView : FrameLayout {
 
     fun setErrorLayoutId(layoutId: Int) {
         checkIsLegalStatus()
-        this.mErrorLayoutId = layoutId
         mErrorView = null
+        this.mErrorLayoutId = layoutId
     }
 
     fun setErrorView(view: View) {
@@ -312,8 +312,8 @@ class StatefulView : FrameLayout {
 
     fun setContentLayoutId(layoutId: Int) {
         checkIsLegalStatus()
-        this.mContentLayoutId = layoutId
         mContentView = null
+        this.mContentLayoutId = layoutId
     }
 
     fun setContentView(view: View) {
